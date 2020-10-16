@@ -22,10 +22,10 @@ var PGL;
 		gl.shaderSource(shader, sourceCode);
 		gl.compileShader(shader);
 		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    		alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
-    		gl.deleteShader(shader);
-    		return null;
-  		}
+			alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
+			gl.deleteShader(shader);
+			return null;
+		}
 		return shader;
 	};
 	
@@ -34,8 +34,8 @@ var PGL;
 		const vertShader = initShader(vertSource, gl.VERTEX_SHADER);
 		const fragShader = initShader(fragSource, gl.FRAGMENT_SHADER);
 		gl.attachShader(program, vertShader);
-  		gl.attachShader(program, fragShader);
-  		gl.linkProgram(program);
+		gl.attachShader(program, fragShader);
+		gl.linkProgram(program);
 		if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 			alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(program));
 			return null;
