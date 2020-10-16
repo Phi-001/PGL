@@ -42,5 +42,4 @@ var PGL;
 		}
 		return program;
 	};
-	
 });
