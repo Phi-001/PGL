@@ -2,7 +2,7 @@ var PGL;
 (function() {
 	var canvas, gl;
 	var init = function() {
-	    if (canvas) {
+		if (canvas) {
 			throw new Error("There can only be one active PGL canvas.");
 		}
 		canvas = document.createElement("canvas");
