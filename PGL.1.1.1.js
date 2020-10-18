@@ -1,7 +1,8 @@
 var PGL;
 (function() {
-	var canvas, gl;
+	var canvas, gl, buffers, uniformsSetter;
 	var textureUnit = 0;
+	var initialized = false;
 	// sets up canvas and WebGL
 	var init = function() {
 		canvas = document.createElement("canvas");
@@ -68,7 +69,7 @@ var PGL;
 		return undefined;
 	}
 	// sets uniform
-	var uniformSetter = function(program, uniformInfo) {
+	var getUniformSetter = function(program, uniformInfo) {
 		const location = gl.getUniformLocation(program, uniformInfo.name);
 		const type = uniformInfo.type;
 		// Check if this uniform is an array
@@ -183,11 +184,12 @@ var PGL;
 			}(getBindPointForSamplerType(type), textureUnit++);
 		}
 	};
-	// sets uniform to its corresponding value
-	var setUniforms = function(programInfo) {
+	// uniforms setter
+	var getUniformsSetter = function(programInfo) {
 		textureUnit = 0;
 		const program = programInfo.program;
 		const numUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+		uniformsSetter = [];
 		for (var i = 0; i < numUniforms; i++) {
 			const uniformInfo = gl.getActiveUniform(program, i);
 			if (!uniformInfo) {
@@ -197,32 +199,27 @@ var PGL;
 			if (name.substr(-3) === '[0]') {
 				name = name.substr(0, name.length - 3);
 			}
-			const setter = uniformSetter(program, uniformInfo);
-			setter(programInfo.uniforms[name]);
+			const setter = getUniformSetter(program, uniformInfo);
+			uniformsSetter[name] = setter;
 		}
 	};
-	// draws Object in the scene
-	var drawScene = function(programInfo, buffers) {
-		gl.clearColor(0.0, 0.0, 0.0, 1.0);
-		gl.clearDepth(1.0);
-		gl.enable(gl.DEPTH_TEST);
-		gl.depthFunc(gl.LEQUAL);
-		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-		// bind attributes
-		bindAttribs(programInfo, buffers);
-		// uses program
-		gl.useProgram(programInfo.program);
-		// sets uniforms
-		setUniforms(programInfo);
-		// draw them
-		gl.drawElements(gl.TRIANGLES, programInfo.indices.length, gl.UNSIGNED_SHORT, 0);
+	// sets uniform to its corresponding value
+	var setUniforms = function(programInfo) {
+		if (!uniformsSetter) {
+			getUniformsSetter();
+		}
+		for (var i in uniformsSetter) {
+			if (uniformsSetter.hasOwnProperty(i)) {
+				uniformsSetter[i](programInfo.uniforms[i]);
+			}
+		}
 	};
 	// renderes scene from program information
-	var render = function(programInfo) {
+	var initBuffers = function(programInfo) {
 		const program = initProgram(programInfo.vertexShader, programInfo.fragmentShader);
 		programInfo.program = program;
 		const numAtribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
-		var buffers = {};
+		buffers = {};
 		// indicies
 		{
 			const buffer = gl.createBuffer();
@@ -252,7 +249,26 @@ var PGL;
 				type: type,
 			};
 		}
-		drawScene(programInfo, buffers);
+	};
+	// draws Object in the scene
+	var render = function(programInfo) {
+		if (!initialized) {
+			initBuffers(programInfo);
+			initialized = true;
+		}
+		gl.clearColor(0.0, 0.0, 0.0, 1.0);
+		gl.clearDepth(1.0);
+		gl.enable(gl.DEPTH_TEST);
+		gl.depthFunc(gl.LEQUAL);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		// bind attributes
+		bindAttribs(programInfo, buffers);
+		// uses program
+		gl.useProgram(programInfo.program);
+		// sets uniforms
+		setUniforms(programInfo);
+		// draw them
+		gl.drawElements(gl.TRIANGLES, programInfo.indices.length, gl.UNSIGNED_SHORT, 0);
 	};
 	// check if value is power of 2
 	function isPowerOf2(value) {
@@ -284,6 +300,7 @@ var PGL;
 		render: render,
 		initShader: initShader,
 		initProgram: initProgram,
+		initBuffers: initBuffers,
 		gl: gl,
 		canvas: canvas,
 	};
