@@ -1,8 +1,3 @@
-/**
-Include 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js" integrity="sha512-zhHQR0/H5SEBL3Wn6yYSaTTZej12z0hVZKOv3TwCUXT1z5qeqGcXJLLrbERYRScEDDpYIJhPC1fk31gqR783iQ==" crossorigin="anonymous" defer>
-on html
-**/
 var PGL;
 (function() {
 	var canvas, gl;
@@ -273,6 +268,37 @@ var PGL;
 			};
 		}
 		drawScene(programInfo, buffers);
+	};
+	// check if value is power of 2
+	function isPowerOf2(value) {
+		return (value & (value - 1)) == 0;
+	}
+	// loads texture
+	var loadTexture = function(url) {
+		const texture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+		const image = new Image();
+		image.onload = function() {
+			gl.bindTexture(gl.TEXTURE_2D, texture);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+			if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+				gl.generateMipmap(gl.TEXTURE_2D);
+			} else {
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+			}
+		};
+		image.src = url;
+		return texture;
+	};
+	PGL = {
+		loadTexture: loadTexture,
+		render: render,
+		init: init,
+		initShader: initShader,
+		initProgram: initProgram
 	};
 })();
 	
