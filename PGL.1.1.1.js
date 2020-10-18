@@ -46,15 +46,15 @@ var PGL;
 		return program;
 	};
 	// binds attributes
-	var bindAttribs = function(programInfo, buffers) {
+	var bindAttribs = function(buffers) {
 		// set indicies
 		gl.bindbuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indecis.buffer);
 		// set every attributes
 		for (var i in buffers) {
 			if (buffers.hasOwnProperty(i)) {
 				gl.bindBuffer(gl.ARRAY_BUFFER, buffers[i].buffer);
-				gl.vertexAtribPointer(programInfo.attribLocations[i], buffers[i].numComponents, buffers[i].type, false, 0, 0);
-				gl.enableVertexAttribArray(programInfo.attribLocations[i]);
+				gl.vertexAttribPointer(buffers[i].location, buffers[i].numComponents, buffers[i].type, false, 0, 0);
+				gl.enableVertexAttribArray(buffers[i].location);
 			}
 		}
 	};
@@ -218,7 +218,7 @@ var PGL;
 	var initBuffers = function(programInfo) {
 		const program = initProgram(programInfo.vertexShader, programInfo.fragmentShader);
 		programInfo.program = program;
-		const numAtribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+		const numAttribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
 		buffers = {};
 		// indicies
 		{
@@ -230,13 +230,13 @@ var PGL;
 			};
 		}
 		// other attributes
-		for (var i = 0; i < numAtribs; i++) {
-			const atribInfo = gl.getActiveAttrib(program, i);
-			if (!atribInfo) {
+		for (var i = 0; i < numAttribs; i++) {
+			const attribInfo = gl.getActiveAttrib(program, i);
+			if (!attribInfo) {
 				break;
 			}
-			var name = atribInfo.name;
-			var type = atribInfo.type;
+			var name = attribInfo.name;
+			var type = attribInfo.type;
 			if (name.substr(-3) === '[0]') {
 				name = name.substr(0, name.length - 3);
 			}
@@ -247,6 +247,7 @@ var PGL;
 				buffer: buffer,
 				numComponents: programInfo.attributes[name].numComponents,
 				type: type,
+				location: gl.getAttribLocation(program, name),
 			};
 		}
 	};
@@ -262,7 +263,7 @@ var PGL;
 		gl.depthFunc(gl.LEQUAL);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		// bind attributes
-		bindAttribs(programInfo, buffers);
+		bindAttribs(buffers);
 		// uses program
 		gl.useProgram(programInfo.program);
 		// sets uniforms
