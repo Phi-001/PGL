@@ -298,7 +298,9 @@ var PGL;
 		render: render,
 		init: init,
 		initShader: initShader,
-		initProgram: initProgram
+		initProgram: initProgram,
+		gl: gl,
+		canvas: canvas
 	};
 })();
 	
