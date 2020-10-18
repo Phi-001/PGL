@@ -2,12 +2,8 @@ var PGL;
 (function() {
 	var canvas, gl;
 	var textureUnit = 0;
-	var initialized = false;
 	// sets up canvas and WebGL
 	var init = function() {
-		if (canvas) {
-			throw new Error("There can only be one active PGL canvas.");
-		}
 		canvas = document.createElement("canvas");
 		document.body.appendChild(canvas);
 		const glArgs = {preserveDrawingBuffer : true, failIfMajorPerformanceCaveat : false};
@@ -18,7 +14,6 @@ var PGL;
 		}
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		gl.clear(gl.COLOR_BUFFER_BIT);
-		initialized = true;
 	};
 	// initialize shader from it's code and type
 	var initShader = function(sourceCode, shaderType) {
@@ -221,9 +216,6 @@ var PGL;
 	};
 	// renderes scene from program information
 	var render = function(programInfo) {
-		if (!initialized) {
-			init();
-		}
 		const program = initProgram(programInfo.vertexShader, programInfo.fragmentShader);
 		programInfo.program = program;
 		const numAtribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
@@ -283,10 +275,10 @@ var PGL;
 		image.src = url;
 		return texture;
 	};
+	init();
 	PGL = {
 		loadTexture: loadTexture,
 		render: render,
-		init: init,
 		initShader: initShader,
 		initProgram: initProgram,
 		gl: gl,
