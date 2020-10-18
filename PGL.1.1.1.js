@@ -234,7 +234,7 @@ var PGL;
 		}
 		// other attributes
 		for (var i = 0; i < numAtribs; i++) {
-			const atribInfo = gl.getActiveAtrib(program, i);
+			const atribInfo = gl.getActiveAttrib(program, i);
 			if (!atribInfo) {
 				break;
 			}
