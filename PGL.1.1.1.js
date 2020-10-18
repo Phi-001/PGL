@@ -49,7 +49,7 @@ var PGL;
 	// binds attributes
 	var bindAttribs = function(programInfo, buffers) {
 		// set indicies
-		gl.bindbuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.index.buffer);
+		gl.bindbuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indecis.buffer);
 		// set every attributes
 		for (var i in buffers) {
 			if (buffers.hasOwnProperty(i)) {
@@ -199,8 +199,8 @@ var PGL;
 			if (name.substr(-3) === '[0]') {
 				name = name.substr(0, name.length - 3);
 			}
-			const setter = uniformSetter(programInfo.program, uniformInfo);
-			setter(programInfo.uniforms.name);
+			const setter = uniformSetter(program, uniformInfo);
+			setter(programInfo.uniforms[name]);
 		}
 	};
 	// draws Object in the scene
@@ -217,7 +217,7 @@ var PGL;
 		// sets uniforms
 		setUniforms(programInfo);
 		// draw them
-		gl.drawElements(gl.TRIANGLES, programInfo.index.length, gl.UNSIGNED_SHORT, 0);
+		gl.drawElements(gl.TRIANGLES, programInfo.indices.length, gl.UNSIGNED_SHORT, 0);
 	};
 	// renderes scene from program information
 	var render = function(programInfo) {
@@ -232,8 +232,8 @@ var PGL;
 		{
 			const buffer = gl.createBuffer();
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
-			gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(programInfo.index), gl.STATIC_DRAW);
-			buffers.index = {
+			gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(programInfo.indices), gl.STATIC_DRAW);
+			buffers.indices = {
 				buffer: buffer
 			};
 		}
@@ -250,20 +250,10 @@ var PGL;
 			}
 			const buffer = gl.createBuffer();
 			gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(programInfo.attributes[name]), gl.STATIC_DRAW);
-			var numComponents = type.substr(-1);
-			if (numComponents === '2') {
-				numComponents = 2;
-			} else if (numComponents === '3') {
-				numComponents = 3;
-			} else if (numComponents === '4') {
-				numComponents = 4;
-			} else {
-				numComponents = 1;
-			}
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(programInfo.attributes[name].buffer), gl.STATIC_DRAW);
 			buffers[name] = {
 				buffer: buffer,
-				numComponents: numComponents,
+				numComponents: programInfo.attributes[name].numComponents,
 				type: type,
 			};
 		}
