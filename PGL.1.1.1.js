@@ -6,7 +6,10 @@ var PGL;
 	var init = function() {
 		canvas = document.createElement("canvas");
 		document.body.appendChild(canvas);
-		const glArgs = {preserveDrawingBuffer : true, failIfMajorPerformanceCaveat : false};
+		const glArgs = {
+			preserveDrawingBuffer : true, 
+			failIfMajorPerformanceCaveat : false
+		};
 		gl = canvas.getContext("webgl", glArgs) || canvas.getContext("experimental-webgl", glArgs);
 		if (!gl) {
 			alert("Unable to initialize WebGL. Your browser or machine may not support it.");
@@ -282,7 +285,7 @@ var PGL;
 		initShader: initShader,
 		initProgram: initProgram,
 		gl: gl,
-		canvas: canvas
+		canvas: canvas,
 	};
 })();
 	
