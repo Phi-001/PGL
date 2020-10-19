@@ -48,7 +48,7 @@ var PGL;
 	// binds attributes
 	var bindAttribs = function(buffers) {
 		// set indicies
-		gl.bindbuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indeces.buffer);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices.buffer);
 		// set every attributes
 		for (var i in buffers) {
 			if (buffers.hasOwnProperty(i)) {
@@ -66,7 +66,6 @@ var PGL;
 		if (type === gl.SAMPLER_CUBE) {
 			return gl.TEXTURE_CUBE_MAP;  
 		}
-		return undefined;
 	}
 	// sets uniform
 	var getUniformSetter = function(program, uniformInfo) {
