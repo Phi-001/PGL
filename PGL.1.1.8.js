@@ -26,11 +26,6 @@ var PGL;
 		const shader = gl.createShader(shaderType);
 		gl.shaderSource(shader, sourceCode);
 		gl.compileShader(shader);
-		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-			alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
-			gl.deleteShader(shader);
-			return null;
-		}
 		return shader;
 	};
 	// initialize program from vertex/fragment shader source code
@@ -42,9 +37,13 @@ var PGL;
 		gl.attachShader(program, fragShader);
 		gl.linkProgram(program);
 		if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-			alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(program));
+			console.error('Link failed: ' + gl.getProgramInfoLog(program));
+			console.error('vertex shader info-log: ' + gl.getShaderInfoLog(vertShader));
+			console.error('fragment shader info-log: ' + gl.getShaderInfoLog(fragShader));
 			return null;
 		}
+		gl.deleteShader(vertShader);
+		gl.deleteShader(fragShader);
 		return program;
 	};
 	// binds attributes
