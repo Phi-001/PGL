@@ -51,7 +51,7 @@ var PGL;
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices.buffer);
 		// set every attributes
 		for (var i in buffers) {
-			if (buffers.hasOwnProperty(i)) {
+			if (buffers.hasOwnProperty(i) && i !== "indices") {
 				gl.bindBuffer(gl.ARRAY_BUFFER, buffers[i].buffer);
 				gl.vertexAttribPointer(buffers[i].location, buffers[i].numComponents, buffers[i].type, false, 0, 0);
 				gl.enableVertexAttribArray(buffers[i].location);
