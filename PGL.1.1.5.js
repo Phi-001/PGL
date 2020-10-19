@@ -205,7 +205,7 @@ var PGL;
 	// sets uniform to its corresponding value
 	var setUniforms = function(programInfo) {
 		if (!uniformsSetter) {
-			getUniformsSetter();
+			getUniformsSetter(programInfo);
 		}
 		for (var i in uniformsSetter) {
 			if (uniformsSetter.hasOwnProperty(i)) {
