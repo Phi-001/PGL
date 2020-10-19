@@ -245,7 +245,7 @@ var PGL;
 			buffers[name] = {
 				buffer: buffer,
 				numComponents: programInfo.attributes[name].numComponents,
-				type: type,
+				type: programInfo.attributes[name].type,
 				location: gl.getAttribLocation(program, name),
 			};
 		}
