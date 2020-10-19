@@ -48,7 +48,7 @@ var PGL;
 	// binds attributes
 	var bindAttribs = function(buffers) {
 		// set indicies
-		gl.bindbuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indecis.buffer);
+		gl.bindbuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indeces.buffer);
 		// set every attributes
 		for (var i in buffers) {
 			if (buffers.hasOwnProperty(i)) {
