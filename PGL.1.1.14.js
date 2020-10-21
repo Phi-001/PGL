@@ -255,6 +255,7 @@ var PGL;
 	var init = function() {
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		gl.clearDepth(1.0);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	};
 	// draws Object in the scene
 	var render = function(programInfo) {
@@ -262,7 +263,6 @@ var PGL;
 			initBuffers(programInfo);
 			programInfo.initialized = true;
 		}
-		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		// bind attributes
 		bindAttribs(programInfo.buffers);
 		// uses program
