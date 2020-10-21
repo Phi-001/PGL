@@ -3,23 +3,22 @@ var PGL;
 	var canvas, gl;
 	var textureUnit = 0;
 	// sets up canvas and WebGL
-	var init = function() {
-		canvas = document.createElement("canvas");
-		canvas.width = 600;
-		canvas.height = 600;
-		document.body.appendChild(canvas);
-		const glArgs = {
-			preserveDrawingBuffer : true, 
-			failIfMajorPerformanceCaveat : false
-		};
-		gl = canvas.getContext("webgl", glArgs) || canvas.getContext("experimental-webgl", glArgs);
-		if (!gl) {
-			alert("Unable to initialize WebGL. Your browser or machine may not support it.");
-			return;
-		}
-		gl.clearColor(0.0, 0.0, 0.0, 1.0);
-		gl.clear(gl.COLOR_BUFFER_BIT);
+	canvas = document.createElement("canvas");
+	canvas.width = 600;
+	canvas.height = 600;
+	document.body.appendChild(canvas);
+	const glArgs = {
+		preserveDrawingBuffer : true, 
+		failIfMajorPerformanceCaveat : false
 	};
+	gl = canvas.getContext("webgl", glArgs) || canvas.getContext("experimental-webgl", glArgs);
+	if (!gl) {
+		alert("Unable to initialize WebGL. Your browser or machine may not support it.");
+	}
+	gl.clearColor(0.0, 0.0, 0.0, 1.0);
+	gl.clear(gl.COLOR_BUFFER_BIT);
+	gl.enable(gl.DEPTH_TEST);
+	gl.depthFunc(gl.LEQUAL);
 	// initialize shader from it's code and type
 	var initShader = function(sourceCode, shaderType) {
 		const shader = gl.createShader(shaderType);
@@ -252,16 +251,17 @@ var PGL;
 		}
 		programInfo.buffers = buffers;
 	};
+	// initializes for rendering
+	var init = function() {
+		gl.clearColor(0.0, 0.0, 0.0, 1.0);
+		gl.clearDepth(1.0);
+	};
 	// draws Object in the scene
 	var render = function(programInfo) {
 		if (!programInfo.initialized) {
 			initBuffers(programInfo);
 			programInfo.initialized = true;
 		}
-		gl.clearColor(0.0, 0.0, 0.0, 1.0);
-		gl.clearDepth(1.0);
-		gl.enable(gl.DEPTH_TEST);
-		gl.depthFunc(gl.LEQUAL);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		// bind attributes
 		bindAttribs(programInfo.buffers);
@@ -296,13 +296,13 @@ var PGL;
 		image.src = url;
 		return texture;
 	};
-	init();
 	PGL = {
 		loadTexture: loadTexture,
 		render: render,
 		initShader: initShader,
 		initProgram: initProgram,
 		initBuffers: initBuffers,
+		init: init,
 		gl: gl,
 		canvas: canvas,
 	};
