@@ -1,6 +1,6 @@
 var PGL;
 (function() {
-	var canvas, gl, buffers;
+	var canvas, gl;
 	var textureUnit = 0;
 	// sets up canvas and WebGL
 	var init = function() {
@@ -219,7 +219,7 @@ var PGL;
 		const program = initProgram(programInfo.vertexShader, programInfo.fragmentShader);
 		programInfo.program = program;
 		const numAttribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
-		buffers = {};
+		var buffers = {};
 		// indicies
 		{
 			const buffer = gl.createBuffer();
@@ -250,6 +250,7 @@ var PGL;
 				location: gl.getAttribLocation(program, name),
 			};
 		}
+		programInfo.buffers = buffers;
 	};
 	// draws Object in the scene
 	var render = function(programInfo) {
@@ -263,7 +264,7 @@ var PGL;
 		gl.depthFunc(gl.LEQUAL);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		// bind attributes
-		bindAttribs(buffers);
+		bindAttribs(programInfo.buffers);
 		// uses program
 		gl.useProgram(programInfo.program);
 		// sets uniforms
