@@ -235,7 +235,7 @@ var PGL;
 	};
 	var initVAO = function(programInfo) {
 		const vao = exts.vao.createVertexArrayOES();
-		exts.vao.bindVertexArray(vao);
+		exts.vao.bindVertexArrayOES(vao);
 		initBuffers(programInfo);
 		programInfo.vao = vao;
 		exts.vao.bindVertexArrayOES(null);
