@@ -1,6 +1,6 @@
 var PGL;
 (function() {
-	var canvas, gl;
+	var canvas, gl, exts;
 	var textureUnit = 0;
 	// sets up canvas and WebGL
 	canvas = document.createElement("canvas");
@@ -15,6 +15,10 @@ var PGL;
 	if (!gl) {
 		alert("Unable to initialize WebGL. Your browser or machine may not support it.");
 	}
+	exts = {
+		instance: gl.getExtension('ANGLE_instanced_arrays'),
+		vao: gl.getExtension('OES_vertex_array_object'),
+	};
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	gl.enable(gl.DEPTH_TEST);
@@ -43,19 +47,6 @@ var PGL;
 		gl.deleteShader(vertShader);
 		gl.deleteShader(fragShader);
 		return program;
-	};
-	// binds attributes
-	var bindAttribs = function(buffers) {
-		// set indicies
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices.buffer);
-		// set every attributes
-		for (var i in buffers) {
-			if (buffers.hasOwnProperty(i) && i !== "indices") {
-				gl.bindBuffer(gl.ARRAY_BUFFER, buffers[i].buffer);
-				gl.vertexAttribPointer(buffers[i].location, buffers[i].numComponents, buffers[i].type, false, 0, 0);
-				gl.enableVertexAttribArray(buffers[i].location);
-			}
-		}
 	};
 	// gets bind point for sampler type
 	function getBindPointForSamplerType(type) {
@@ -218,15 +209,11 @@ var PGL;
 		const program = initProgram(programInfo.vertexShader, programInfo.fragmentShader);
 		programInfo.program = program;
 		const numAttribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
-		var buffers = {};
-		// indicies
+		// indices
 		{
 			const buffer = gl.createBuffer();
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
 			gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(programInfo.indices), gl.STATIC_DRAW);
-			buffers.indices = {
-				buffer: buffer
-			};
 		}
 		// other attributes
 		for (var i = 0; i < numAttribs; i++) {
@@ -235,21 +222,23 @@ var PGL;
 				break;
 			}
 			var name = attribInfo.name;
-			var type = attribInfo.type;
 			if (name.substr(-3) === '[0]') {
 				name = name.substr(0, name.length - 3);
 			}
 			const buffer = gl.createBuffer();
+			const location = gl.getAttribLocation(program, name);
 			gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(programInfo.attributes[name].buffer), gl.STATIC_DRAW);
-			buffers[name] = {
-				buffer: buffer,
-				numComponents: programInfo.attributes[name].numComponents,
-				type: programInfo.attributes[name].type,
-				location: gl.getAttribLocation(program, name),
-			};
+			gl.vertexAttribPointer(location, programInfo.attributes[name].numComponents, programInfo.attributes[name].type, false, 0, 0);
+			gl.enableVertexAttribArray(location);
 		}
-		programInfo.buffers = buffers;
+	};
+	var initVAO = function(programInfo) {
+		const vao = exts.vao.createVertexArrayOES();
+		exts.vao.bindVertexArray(vao);
+		initBuffers(programInfo);
+		programInfo.vao = vao;
+		exts.vao.bindVertexArray(null);
 	};
 	// initializes for rendering
 	var init = function() {
@@ -260,11 +249,11 @@ var PGL;
 	// draws Object in the scene
 	var render = function(programInfo) {
 		if (!programInfo.initialized) {
-			initBuffers(programInfo);
+			initVAO(programInfo);
 			programInfo.initialized = true;
 		}
 		// bind attributes
-		bindAttribs(programInfo.buffers);
+		exts.vao.bindVertexArrayOES(programInfo.vao);
 		// uses program
 		gl.useProgram(programInfo.program);
 		// sets uniforms
