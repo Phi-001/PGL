@@ -1,6 +1,6 @@
 var PGL;
 (function() {
-	var canvas, gl, buffers, uniformsSetter;
+	var canvas, gl, buffers;
 	var textureUnit = 0;
 	var initialized = false;
 	// sets up canvas and WebGL
@@ -189,7 +189,7 @@ var PGL;
 		textureUnit = 0;
 		const program = programInfo.program;
 		const numUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
-		uniformsSetter = [];
+		var uniformsSetter = [];
 		for (var i = 0; i < numUniforms; i++) {
 			const uniformInfo = gl.getActiveUniform(program, i);
 			if (!uniformInfo) {
@@ -202,15 +202,16 @@ var PGL;
 			const setter = getUniformSetter(program, uniformInfo);
 			uniformsSetter[name] = setter;
 		}
+		programInfo.uniformsSetter = uniformsSetter;
 	};
 	// sets uniform to its corresponding value
 	var setUniforms = function(programInfo) {
-		if (!uniformsSetter) {
+		if (!programInfo.uniformsSetter) {
 			getUniformsSetter(programInfo);
 		}
-		for (var i in uniformsSetter) {
-			if (uniformsSetter.hasOwnProperty(i)) {
-				uniformsSetter[i](programInfo.uniforms[i]);
+		for (var i in programInfo.uniformsSetter) {
+			if (programInfo.uniformsSetter.hasOwnProperty(i)) {
+				programInfo.uniformsSetter[i](programInfo.uniforms[i]);
 			}
 		}
 	};
