@@ -2,7 +2,6 @@ var PGL;
 (function() {
 	var canvas, gl, buffers;
 	var textureUnit = 0;
-	var initialized = false;
 	// sets up canvas and WebGL
 	var init = function() {
 		canvas = document.createElement("canvas");
@@ -254,9 +253,9 @@ var PGL;
 	};
 	// draws Object in the scene
 	var render = function(programInfo) {
-		if (!initialized) {
+		if (!programInfo.initialized) {
 			initBuffers(programInfo);
-			initialized = true;
+			programInfo.initialized = true;
 		}
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		gl.clearDepth(1.0);
