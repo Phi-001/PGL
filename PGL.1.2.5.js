@@ -249,13 +249,12 @@ var PGL;
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	};
 	// draws Object in the scene
-	var render = function(programInfo, changeInfo) {
+	var render = function(programInfo, attributes) {
 		if (!programInfo.initialized) {
 			initVAO(programInfo);
 			programInfo.initialized = true;
 		}
-		if (changeInfo) {
-			const attributes = changeInfo.attributes;
+		if (attributes) {
 			const program = programInfo.program;
 			for (var i in attributes) {
 				if (attributes.hasOwnProperty(i)) {
@@ -265,13 +264,6 @@ var PGL;
 					gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(attributes[i].buffer), gl.STATIC_DRAW);
 					gl.vertexAttribPointer(location, attributes[i].numComponents, attributes[i].type, false, 0, 0);
 					gl.enableVertexAttribArray(location);
-				}
-			}
-			const uniforms = changeInfo.uniforms;
-			const setter = programInfo.uniformsSetter;
-			for (var i in uniforms) {
-				if (uniforms.hasOwnProperty(i)) {
-					setter[i](uniforms[i]);
 				}
 			}
 		}
