@@ -1,3 +1,4 @@
+// jshint esversion: 6
 var PGL;
 (function() {
 	var canvas, gl, exts;
@@ -233,6 +234,7 @@ var PGL;
 			gl.enableVertexAttribArray(location);
 		}
 	};
+	// initialize vertex array object
 	var initVAO = function(programInfo) {
 		const vao = exts.vao.createVertexArrayOES();
 		exts.vao.bindVertexArrayOES(vao);
@@ -247,10 +249,31 @@ var PGL;
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	};
 	// draws Object in the scene
-	var render = function(programInfo) {
+	var render = function(programInfo, changeInfo) {
 		if (!programInfo.initialized) {
 			initVAO(programInfo);
 			programInfo.initialized = true;
+		}
+		if (changeInfo) {
+			const attributes = changeInfo.attributes;
+			const program = programInfo.program;
+			for (var i in attributes) {
+				if (attributes.hasOwnProperty(i)) {
+					const buffer = gl.createBuffer();
+					const location = gl.getAttribLocation(program, name);
+					gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+					gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(attributes[i].buffer), gl.STATIC_DRAW);
+					gl.vertexAttribPointer(location, attributes[i].numComponents, attributes[i].type, false, 0, 0);
+					gl.enableVertexAttribArray(location);
+				}
+			}
+			const uniforms = changeInfo.uniforms;
+			const setter = programInfo.uniformsSetter;
+			for (var i in uniforms) {
+				if (uniforms.hasOwnProperty(i)) {
+					setter[i](uniforms[i]);
+				}
+			}
 		}
 		// bind attributes
 		exts.vao.bindVertexArrayOES(programInfo.vao);
