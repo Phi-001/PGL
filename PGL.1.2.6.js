@@ -5,8 +5,8 @@ var PGL;
 	var textureUnit = 0;
 	// sets up canvas and WebGL
 	canvas = document.createElement("canvas");
-	canvas.width = 600;
-	canvas.height = 600;
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
 	document.body.appendChild(canvas);
 	const glArgs = {
 		preserveDrawingBuffer : true, 
