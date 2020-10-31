@@ -280,7 +280,7 @@ var PGL;
 	function isPowerOf2(value) {
 		return (value & (value - 1)) == 0;
 	}
-	// loads texture
+	// loads texture from url
 	var loadTexture = function(url) {
 		const texture = gl.createTexture();
 		gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -300,6 +300,20 @@ var PGL;
 		image.src = url;
 		return texture;
 	};
+	// loads texture from data
+	var loadTextureData = function(data, info) {
+		const texture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(data));
+		if (isPowerOf2(info.width) && isPowerOf2(info.height)) {
+			gl.generateMipmap(gl.TEXTURE_2D);
+		} else {
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		}
+		return texture;
+	}
 	PGL = {
 		loadTexture: loadTexture,
 		render: render,
