@@ -316,6 +316,7 @@ var PGL;
 	}
 	PGL = {
 		loadTexture: loadTexture,
+		loadTextureData: loadTextureData,
 		render: render,
 		initShader: initShader,
 		initProgram: initProgram,
