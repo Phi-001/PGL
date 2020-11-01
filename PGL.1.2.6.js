@@ -304,7 +304,7 @@ var PGL;
 	var loadTextureData = function(data, info) {
 		const texture = gl.createTexture();
 		gl.bindTexture(gl.TEXTURE_2D, texture);
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(data));
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, info.width, info.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(data));
 		if (isPowerOf2(info.width) && isPowerOf2(info.height) && info.width === info.height) {
 			gl.generateMipmap(gl.TEXTURE_2D);
 		} else {
