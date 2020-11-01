@@ -14,7 +14,7 @@ var PGL;
 	};
 	gl = canvas.getContext("webgl", glArgs) || canvas.getContext("experimental-webgl", glArgs);
 	if (!gl) {
-		alert("Unable to initialize WebGL. Your browser or machine may not support it.");
+		alert("Unable to initialize WebGL. Try: https://get.webgl.org");
 	}
 	exts = {
 		instance: gl.getExtension('ANGLE_instanced_arrays'),
