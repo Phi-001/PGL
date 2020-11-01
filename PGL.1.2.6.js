@@ -254,6 +254,8 @@ var PGL;
 			initVAO(programInfo);
 			programInfo.initialized = true;
 		}
+		// bind attributes
+		exts.vao.bindVertexArrayOES(programInfo.vao);
 		if (attributes) {
 			const program = programInfo.program;
 			for (var i in attributes) {
@@ -267,14 +269,13 @@ var PGL;
 				}
 			}
 		}
-		// bind attributes
-		exts.vao.bindVertexArrayOES(programInfo.vao);
 		// uses program
 		gl.useProgram(programInfo.program);
 		// sets uniforms
 		setUniforms(programInfo);
 		// draw them
 		gl.drawElements(gl.TRIANGLES, programInfo.indices.length, gl.UNSIGNED_SHORT, 0);
+		exts.vao.bindVertexArrayOES(null);
 	};
 	// check if value is power of 2
 	function isPowerOf2(value) {
