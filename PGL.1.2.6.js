@@ -313,7 +313,7 @@ var PGL;
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 		}
 		return texture;
-	}
+	};
 	PGL = {
 		loadTexture: loadTexture,
 		loadTextureData: loadTextureData,
