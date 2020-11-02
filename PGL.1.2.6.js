@@ -17,8 +17,8 @@ var PGL;
 		alert("Unable to initialize WebGL. Try: https://get.webgl.org");
 	}
 	exts = {
-		instance: gl.getExtension('ANGLE_instanced_arrays'),
-		vao: gl.getExtension('OES_vertex_array_object'),
+		instance: gl.getExtension('ANGLE_instanced_arrays') || gl.getExtension('MOZ_ANGLE_instanced_arrays') || gl.getExtension('WEBKIT_ANGLE_instanced_arrays'),
+		vao: gl.getExtension('OES_vertex_array_object') || gl.getExtension('MOZ_OES_vertex_array_object') || gl.getExtension('WEBKIT_OES_vertex_array_object'),
 	};
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.clear(gl.COLOR_BUFFER_BIT);
