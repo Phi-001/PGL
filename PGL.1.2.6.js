@@ -318,6 +318,21 @@ var PGL;
 		}
 		return texture;
 	};
+	var setupFramebuffer = function(img, imgInfo) {
+		var fb = gl.createFramebuffer();
+		gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, img, 0);
+		var depthBuffer = gl.createRenderbuffer();
+		gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
+		gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, imgInfo.width, imgInfo.height);
+		gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+		return fb;
+	};
+	var useFramebuffer = function(fb, imgInfo) {
+		gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+		gl.viewport(0, 0, imgInfo.width, imgInfo.height);
+	}
 	PGL = {
 		loadTexture: loadTexture,
 		loadTextureData: loadTextureData,
@@ -328,6 +343,8 @@ var PGL;
 		init: init,
 		gl: gl,
 		canvas: canvas,
+		setupFramebuffer: setupFramebuffer,
+		useFramebuffer: useFramebuffer,
 	};
 })();
 	
