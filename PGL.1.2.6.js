@@ -336,12 +336,12 @@ var PGL;
 	var screenVert = [
 		-1, -1,
 		-1,  1,
-		 1, -1,
 		 1,  1,
+		 1, -1,
 	];
 	var screenInd = [
-		0, 1, 2,
-		0, 2, 3,
+		2, 1, 0,
+		3, 2, 0,
 	];
 	PGL = {
 		loadTexture: loadTexture,
@@ -357,6 +357,7 @@ var PGL;
 		useFramebuffer: useFramebuffer,
 		screenVert: screenVert,
 		screenInd: screenInd,
+		canvasfb: null,
 	};
 })();
 	
