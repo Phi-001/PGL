@@ -119,7 +119,7 @@ var PGL;
 		}
 		if (type === gl.BOOL) {
 			return function(v) {
-				gl.uniform1iv(location, v);
+				gl.uniform1i(location, v);
 			};
 		}
 		if (type === gl.BOOL_VEC2) {
